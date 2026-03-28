@@ -3,7 +3,7 @@ name: Publish to GitHub Packages
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
 jobs:
   publish:
@@ -17,8 +17,8 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          java-version: '17'
-          distribution: 'temurin'
+          java-version: "17"
+          distribution: "temurin"
 
       - uses: gradle/actions/setup-gradle@v4
 
@@ -26,10 +26,10 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Set version in build.gradle.kts
-        run: sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" build.gradle.kts
+        run: sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" nutcracker/build.gradle.kts
 
       - name: Publish
-        run: ./gradlew publish
+        run: ./nutcracker/gradlew publish
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
