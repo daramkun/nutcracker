@@ -29,7 +29,7 @@ jobs:
         run: sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" nutcracker/build.gradle.kts
 
       - name: Publish
-        run: ./nutcracker/gradlew publish
+        run: cd nutcracker && ./gradlew publish
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

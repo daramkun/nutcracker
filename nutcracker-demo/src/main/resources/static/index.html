@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Nutcracker 한글 입력 데모</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <h1>Nutcracker 한글 입력 데모</h1>
+
+        <!-- 헤더 -->
+        <div id="header">
+            <label for="layout-select">레이아웃:</label>
+            <select id="layout-select"></select>
+            <button id="reset-btn">리셋</button>
+        </div>
+
+        <!-- 텍스트 표시 -->
+        <div id="display">
+            <span id="committed"></span><span id="composing"></span
+            ><span id="cursor"></span>
+        </div>
+
+        <!-- 다음 예측 -->
+        <div id="predictions">
+            <div id="predictions-label">다음 예측</div>
+            <div id="predictions-list"></div>
+        </div>
+
+        <!-- FSM 디버그 -->
+        <details id="debug">
+            <summary>FSM 상태 (디버그)</summary>
+            <div id="debug-grid">
+                <div class="debug-cell">
+                    <span>FSM</span><span id="d-fsm">S0</span>
+                </div>
+                <div class="debug-cell">
+                    <span>초성 (cho)</span><span id="d-cho">-</span>
+                </div>
+                <div class="debug-cell">
+                    <span>중성 (jung)</span><span id="d-jung">-</span>
+                </div>
+                <div class="debug-cell">
+                    <span>종성 (jong)</span><span id="d-jong">-</span>
+                </div>
+                <div class="debug-cell">
+                    <span>겹받침 (jong2)</span><span id="d-jong2">-</span>
+                </div>
+                <div class="debug-cell">
+                    <span>사이클 횟수</span><span id="d-cycle">0</span>
+                </div>
+            </div>
+        </details>
+
+        <!-- 가상 키보드 -->
+        <div id="keyboard"></div>
+
+        <script src="app.js"></script>
+    </body>
+</html>
