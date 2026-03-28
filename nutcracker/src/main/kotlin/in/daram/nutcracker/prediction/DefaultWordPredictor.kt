@@ -45,7 +45,7 @@ class DefaultWordPredictor(
         // 아무것도 입력되지 않은 상태에서는 예측 없음
         if (prefix.isEmpty() && query.composingState.fsm == FSMState.S0) return emptyList()
 
-        val searchLimit = query.maxResults * 5
+        val searchLimit = if (prefix.isEmpty()) query.maxResults * 20 else query.maxResults * 5
 
         // 번들 사전 검색
         val rawResults: List<Pair<String, Float>> = dict
@@ -73,11 +73,9 @@ class DefaultWordPredictor(
         // FSM 상태에 따라 조합 중인 음절 위치에서 필터링
         val filtered = filterByComposingState(merged, query)
 
-        val prefixLength = computeCurrentLength(query)
-
         return filtered.take(query.maxResults).map { (word, score) ->
             val isUserWord = userWords.containsKey(word)
-            val nextJamos = computeNextJamos(word, prefixLength, query.language)
+            val nextJamos = computeNextJamos(word, query)
             PredictionCandidate(
                 word = word,
                 score = score,
@@ -152,7 +150,7 @@ class DefaultWordPredictor(
                 }
             }
 
-            FSMState.S2, FSMState.S4 -> {
+            FSMState.S2 -> {
                 val cho = state.cho ?: return candidates
                 val jung = state.jung ?: return candidates
                 candidates.filter { (word, _) ->
@@ -160,6 +158,16 @@ class DefaultWordPredictor(
                     if (syllable !in '\uAC00'..'\uD7A3') return@filter false
                     val (sCho, sJung, _) = decompose(syllable)
                     sCho == cho && isJungCompatible(jung, sJung)
+                }
+            }
+
+            FSMState.S4 -> {
+                val jung = state.jung ?: return candidates
+                candidates.filter { (word, _) ->
+                    val syllable = word.getOrNull(idx) ?: return@filter false
+                    if (syllable !in '\uAC00'..'\uD7A3') return@filter false
+                    val (sCho, sJung, _) = decompose(syllable)
+                    sCho == 'ㅇ' && isJungCompatible(jung, sJung)
                 }
             }
 
@@ -195,49 +203,104 @@ class DefaultWordPredictor(
     }
 
     /**
-     * 현재 입력된 텍스트의 유효 길이 (음절 단위).
-     * 후보 단어에서 이미 입력된 부분을 제거해 nextJamos를 계산하는 데 사용.
+     * 후보 단어에서 현재 입력 이후 필요한 자모/문자 목록을 계산한다.
+     *
+     * 한국어: FSM 상태에 따라 조합 중인 음절에서 이미 입력된 자모를 건너뛰고,
+     * 아직 입력되지 않은 자모부터 시작한다.
+     *   - S1: 초성 입력됨 → 조합 음절의 [중성, 종성들] + 이후 음절들
+     *   - S2/S4: 초성+중성(또는 모음만) 입력됨 → 조합 음절의 [종성들] + 이후 음절들
+     *   - S3: 홑받침까지 입력됨 → 겹받침이면 [두 번째 종성], 단어에 종성 없으면 다음 음절 [중성, 종성들]
+     *   - S3D: 겹받침까지 입력됨 → 이후 음절들만
+     * 영어/기타: 문자 그대로.
      */
-    private fun computeCurrentLength(query: PredictionQuery): Int {
-        val committed = query.committedText.length
-        return when (query.composingState.fsm) {
-            FSMState.S0 -> committed
-            FSMState.S1 -> committed  // 초성은 아직 음절 미완성
-            else -> if (query.composingText.isNotEmpty()) committed + 1 else committed
+    private fun computeNextJamos(word: String, query: PredictionQuery): List<Char> {
+        val committedLen = query.committedText.length
+        val state = query.composingState
+        val language = query.language
+
+        if (language != InputLanguage.KOREAN) {
+            val currentLength = when (state.fsm) {
+                FSMState.S0 -> committedLen
+                else -> if (query.composingText.isNotEmpty()) committedLen + 1 else committedLen
+            }
+            return if (currentLength >= word.length) emptyList() else word.drop(currentLength).toList()
+        }
+
+        if (committedLen >= word.length) return emptyList()
+
+        val result = mutableListOf<Char>()
+        val composingIdx = committedLen
+        val composingSyllable = word.getOrNull(composingIdx)
+
+        if (state.fsm != FSMState.S0 && composingSyllable != null && composingSyllable in '\uAC00'..'\uD7A3') {
+            val (_, sJung, sJong) = decompose(composingSyllable)
+
+            when (state.fsm) {
+                FSMState.S1 -> {
+                    // 초성 입력됨: 중성 + 종성들
+                    result.add(sJung)
+                    if (sJong != null) appendJong(result, sJong)
+                }
+                FSMState.S2, FSMState.S4 -> {
+                    // 초성+중성 입력됨: 종성들만
+                    if (sJong != null) appendJong(result, sJong)
+                }
+                FSMState.S3 -> {
+                    // 홑받침까지 입력됨
+                    if (sJong != null) {
+                        val split = splitJongseong(sJong)
+                        if (split != null) {
+                            // 겹받침: 두 번째 자모만 남음
+                            result.add(split.second)
+                        }
+                        // 단순 받침: 이미 완전히 입력됨 → 추가 없음
+                    } else {
+                        // 조합 음절에 종성 없음 = state.jong이 다음 음절 초성으로 이동하는 케이스
+                        // 다음 음절의 중성과 종성을 힌트로 제공
+                        val nextSyllable = word.getOrNull(composingIdx + 1)
+                        if (nextSyllable != null && nextSyllable in '\uAC00'..'\uD7A3') {
+                            val (_, nJung, nJong) = decompose(nextSyllable)
+                            result.add(nJung)
+                            if (nJong != null) appendJong(result, nJong)
+                        }
+                        // 다음 음절은 이미 처리했으므로 composingIdx+2부터 이후 음절 추가
+                        appendSyllables(result, word, composingIdx + 2)
+                        return result
+                    }
+                }
+                FSMState.S3D -> {
+                    // 겹받침까지 모두 입력됨: 조합 음절 내 남은 자모 없음
+                }
+                FSMState.S0 -> { /* 조합 중 상태가 아님 */ }
+            }
+        }
+
+        // 조합 음절 이후 음절들 추가
+        appendSyllables(result, word, composingIdx + 1)
+        return result
+    }
+
+    private fun appendJong(result: MutableList<Char>, jong: Char) {
+        val split = splitJongseong(jong)
+        if (split != null) {
+            result.add(split.first)
+            result.add(split.second)
+        } else {
+            result.add(jong)
         }
     }
 
-    /**
-     * 후보 단어에서 현재 입력 이후 필요한 자모/문자 목록을 계산한다.
-     * 한국어: 각 음절을 (초성, 중성, 종성)으로 분해. 겹받침은 두 자모로 분리.
-     * 영어/기타: 문자 그대로.
-     */
-    private fun computeNextJamos(word: String, currentLength: Int, language: InputLanguage): List<Char> {
-        if (currentLength >= word.length) return emptyList()
-        val remaining = word.drop(currentLength)
-        return if (language == InputLanguage.KOREAN) {
-            remaining.flatMap { syllable ->
-                if (syllable in '\uAC00'..'\uD7A3') {
-                    val (cho, jung, jong) = decompose(syllable)
-                    buildList {
-                        add(cho)
-                        add(jung)
-                        if (jong != null) {
-                            val split = splitJongseong(jong)
-                            if (split != null) {
-                                add(split.first)
-                                add(split.second)
-                            } else {
-                                add(jong)
-                            }
-                        }
-                    }
-                } else {
-                    listOf(syllable)
-                }
+    private fun appendSyllables(result: MutableList<Char>, word: String, fromIdx: Int) {
+        for (i in fromIdx until word.length) {
+            val syllable = word[i]
+            if (syllable in '\uAC00'..'\uD7A3') {
+                val (cho, jung, jong) = decompose(syllable)
+                result.add(cho)
+                result.add(jung)
+                if (jong != null) appendJong(result, jong)
+            } else {
+                result.add(syllable)
             }
-        } else {
-            remaining.toList()
         }
     }
 

@@ -98,23 +98,71 @@ class DefaultWordPredictorTest {
         val results = predictor.predict(query)
         val dak = results.firstOrNull { it.word == "닭" }
         assertNotNull(dak, "닭이 예측 결과에 있어야 함")
-        // S1에서 currentLength=0이므로 닭(ㄷ+ㅏ+ㄹ+ㄱ) 전체 분해
-        assertEquals(listOf('ㄷ', 'ㅏ', 'ㄹ', 'ㄱ'), dak!!.nextJamos)
+        // S1: 초성(ㄷ) 입력됨 → 중성+종성들만 [ㅏ, ㄹ, ㄱ]
+        assertEquals(listOf('ㅏ', 'ㄹ', 'ㄱ'), dak!!.nextJamos)
     }
 
     @Test
-    fun `nextJamos - 한글 예측 시 S2(한) 에서 ㄱ,ㅡ,ㄹ 반환`() {
+    fun `nextJamos - 한글 예측 시 S2(ㅎ+ㅏ) 에서 ㄴ,ㄱ,ㅡ,ㄹ 반환`() {
         val query = PredictionQuery(
             committedText = "",
             composingState = SyllableState(fsm = FSMState.S2, cho = 'ㅎ', jung = 'ㅏ'),
-            composingText = "한",
+            composingText = "하",
             language = InputLanguage.KOREAN,
         )
         val results = predictor.predict(query)
         val hangul = results.firstOrNull { it.word == "한글" }
         assertNotNull(hangul, "한글이 예측 결과에 있어야 함")
-        // currentLength=1 (한 포함), 나머지 글(ㄱ+ㅡ+ㄹ)
-        assertEquals(listOf('ㄱ', 'ㅡ', 'ㄹ'), hangul!!.nextJamos)
+        // S2: 초성+중성(ㅎ+ㅏ) 입력됨 → 조합 음절 한(ㅎ+ㅏ+ㄴ)의 종성 ㄴ + 글(ㄱ+ㅡ+ㄹ)
+        assertEquals(listOf('ㄴ', 'ㄱ', 'ㅡ', 'ㄹ'), hangul!!.nextJamos)
+    }
+
+    @Test
+    fun `nextJamos - 닭 예측 시 S2(ㄷ+ㅏ) 에서 종성 ㄹ,ㄱ 반환`() {
+        val query = PredictionQuery(
+            committedText = "",
+            composingState = SyllableState(fsm = FSMState.S2, cho = 'ㄷ', jung = 'ㅏ'),
+            composingText = "다",
+            language = InputLanguage.KOREAN,
+        )
+        val results = predictor.predict(query)
+        val dak = results.firstOrNull { it.word == "닭" }
+        assertNotNull(dak, "닭이 예측 결과에 있어야 함")
+        // S2: 초성+중성(ㄷ+ㅏ) 입력됨 → 조합 음절 닭(ㄷ+ㅏ+ㄺ)의 겹받침 [ㄹ, ㄱ]
+        assertEquals(listOf('ㄹ', 'ㄱ'), dak!!.nextJamos)
+    }
+
+    @Test
+    fun `nextJamos - 닭 예측 시 S3(ㄷ+ㅏ+ㄹ) 에서 겹받침 두 번째 ㄱ 반환`() {
+        val query = PredictionQuery(
+            committedText = "",
+            composingState = SyllableState(fsm = FSMState.S3, cho = 'ㄷ', jung = 'ㅏ', jong = 'ㄹ'),
+            composingText = "달",
+            language = InputLanguage.KOREAN,
+        )
+        val results = predictor.predict(query)
+        val dak = results.firstOrNull { it.word == "닭" }
+        assertNotNull(dak, "닭이 예측 결과에 있어야 함")
+        // S3: ㄷ+ㅏ+ㄹ 입력됨 → 닭의 겹받침 ㄺ 중 두 번째 자모 [ㄱ]
+        assertEquals(listOf('ㄱ'), dak!!.nextJamos)
+    }
+
+    @Test
+    fun `nextJamos - 다람쥐 예측 시 S3(ㄷ+ㅏ+ㄹ) 에서 종성이 다음 초성으로 이동`() {
+        val query = PredictionQuery(
+            committedText = "",
+            composingState = SyllableState(fsm = FSMState.S3, cho = 'ㄷ', jung = 'ㅏ', jong = 'ㄹ'),
+            composingText = "달",
+            language = InputLanguage.KOREAN,
+        )
+        val results = predictor.predict(query)
+        val daramjwi = results.firstOrNull { it.word == "다람쥐" }
+        assertNotNull(daramjwi, "다람쥐가 예측 결과에 있어야 함")
+        // S3(ㄷ+ㅏ+ㄹ): "다"는 종성 없음 → ㄹ이 "람"의 초성이 됨
+        // 다음 입력: "람"의 중성 ㅏ + 종성 ㅁ + "쥐"(ㅈ+ㅜ+ㅣ? 실제 쥐=ㅈ+ㅜ+ㅣ 아니고 ㅈ+ㅜ)
+        val jamos = daramjwi!!.nextJamos
+        assertTrue(jamos.isNotEmpty(), "다람쥐 nextJamos는 비어있지 않아야 함")
+        assertEquals('ㅏ', jamos[0], "다음 입력은 람의 중성 ㅏ여야 함")
     }
 
     @Test
@@ -130,6 +178,29 @@ class DefaultWordPredictorTest {
         if (hangul != null) {
             assertTrue(hangul.nextJamos.isEmpty())
         }
+    }
+
+    @Test
+    fun `S4 - 모음만 입력 시 ㅇ 초성 단어만 예측`() {
+        val dict2 = TrieDictionary(InputLanguage.KOREAN)
+        dict2.initialize(listOf(
+            WordEntry("아이", 100),
+            WordEntry("안녕", 90),
+            WordEntry("바나나", 80),
+        ))
+        val pred2 = DefaultWordPredictor(listOf(dict2))
+        val query = PredictionQuery(
+            committedText = "",
+            composingState = SyllableState(fsm = FSMState.S4, jung = 'ㅏ'),
+            composingText = "아",
+            language = InputLanguage.KOREAN,
+        )
+        val results = pred2.predict(query)
+        val words = results.map { it.word }
+        // ㅏ 중성 + ㅇ 초성: 아이(아=ㅇ+ㅏ) ✓, 안녕(안=ㅇ+ㅏ+ㄴ) ✓, 바나나(바=ㅂ+ㅏ) ✗
+        assertTrue("아이" in words, "아이는 ㅇ+ㅏ 초성 → 예측되어야 함")
+        assertTrue("안녕" in words, "안녕은 ㅇ+ㅏ+ㄴ → 예측되어야 함")
+        assertFalse("바나나" in words, "바나나는 ㅂ 초성 → 제외되어야 함")
     }
 
     // ── 영어 예측 ─────────────────────────────────────────────────────────────
