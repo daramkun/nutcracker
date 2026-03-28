@@ -26,10 +26,10 @@ jobs:
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
 
       - name: Set version in build.gradle.kts
-        run: sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" nutcracker/build.gradle.kts
+        run: sed -i "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" ./build.gradle.kts
 
       - name: Publish
-        run: cd nutcracker && ./gradlew publish
+        run: ./gradlew publish
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,8 +1,11 @@
 plugins {
-    kotlin("jvm") version "2.3.10"
-    kotlin("plugin.serialization") version "2.3.10"
+    kotlin("jvm")
+    kotlin("plugin.serialization")
     application
 }
+
+group = "com.daram"
+version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -11,7 +14,7 @@ repositories {
 val ktorVersion = "3.1.2"
 
 dependencies {
-    implementation("in.daram:nutcracker")
+    implementation(project(":nutcracker"))
 
     implementation("io.ktor:ktor-server-core-jvm:$ktorVersion")
     implementation("io.ktor:ktor-server-netty-jvm:$ktorVersion")
@@ -22,7 +25,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("in.daram.nutcracker.app.MainKt")
+    mainClass.set("com.daram.nutcracker.app.MainKt")
 }
 
 kotlin {

@@ -1,13 +1,6 @@
 plugins {
-    kotlin("jvm") version "2.3.10"
+    kotlin("jvm")
     `maven-publish`
-}
-
-group = "in.daram"
-version = "1.0-SNAPSHOT"
-
-repositories {
-    mavenCentral()
 }
 
 dependencies {
@@ -37,7 +30,7 @@ java {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "in.daram"
+            groupId = "com.daram"
             artifactId = "nutcracker"
             version = project.version.toString()
             from(components["java"])
