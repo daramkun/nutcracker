@@ -8,11 +8,12 @@ data class LayoutInfo(val key: String, val displayName: String)
 object AutomataRegistry {
     val all: Map<String, HangulAutomata> = linkedMapOf(
         "dubeolsik" to DubeolsikAutomata(),
-        "danmoem"   to DanmoemAutomata(),
+        "danmoem" to DanmoemAutomata(),
         "cheonjiin" to CheonjiinAutomata(),
         "naratgeul" to NaratgeulAutomata(),
-        "skyii"     to SkyIIAutomata(),
-        "motorola"  to MotorolaAutomata(),
+        "skyii" to SkyIIAutomata(),
+        "motorola" to MotorolaAutomata(),
+        "english" to EnglishAutomata(),
     )
 
     val layouts: List<LayoutInfo> = all.map { (key, automata) ->
