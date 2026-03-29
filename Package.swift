@@ -16,8 +16,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "Nutcracker",
-            url: "https://github.com/daramkun/nutcracker/releases/download/v0.0.0/Nutcracker.xcframework.zip",
-            checksum: "0000000000000000000000000000000000000000000000000000000000000000"
+            url: "https://github.com/daramkun/nutcracker/releases/download/v0.1.4/Nutcracker.xcframework.zip",
+            checksum: "5af8f0e5af277bd040bc0f70b705448bef7ad4812daa3322e30f47d07e9fc306"
         )
     ]
 )
