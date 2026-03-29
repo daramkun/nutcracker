@@ -1,7 +1,16 @@
-# 한글 입력 오토마타 규칙 명세
+# Nutcracker — 한글 입력 오토마타 라이브러리
 
-> Claude Code 구현용 형식적 명세 (Formal Specification)  
-> 용도는 Android 키보드 구현용이나 추후 다른 키보드 구현으로도 사용하면 좋을 것 같아 프로젝트를 분리함.  
+> **Claude Code 빠른 경로**
+>
+> - 앱에서 라이브러리를 **사용(통합)**하려면 → **[docs/USAGE.md](docs/USAGE.md)** 먼저 읽기
+> - 레이아웃 클래스 선택이 필요하면 → **[docs/LAYOUT_SELECTION.md](docs/LAYOUT_SELECTION.md)**
+> - Android IME 통합 코드 → **[docs/INTEGRATION_ANDROID.md](docs/INTEGRATION_ANDROID.md)**
+> - iOS/macOS 통합 코드 → **[docs/INTEGRATION_IOS.md](docs/INTEGRATION_IOS.md)**
+> - 오토마타 로직을 **구현/수정**하려면 → 아래 문서 구조 따르기
+
+---
+
+> 용도는 Android 키보드 구현용이나 추후 다른 키보드 구현으로도 사용하면 좋을 것 같아 프로젝트를 분리함.
 > 대상 레이아웃: 두벌식 · 단모음 · 천지인 · KT 나랏글 · SKY-II · 모토로라 · 무이128
 
 ---
