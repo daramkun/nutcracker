@@ -1,5 +1,6 @@
 package com.daram.nutcracker.app
 
+import com.daram.nutcracker.prediction.BundledDictionary
 import com.daram.nutcracker.prediction.DefaultWordPredictor
 import com.daram.nutcracker.prediction.InputLanguage
 import com.daram.nutcracker.prediction.KeyMapper
@@ -10,7 +11,13 @@ import com.daram.nutcracker.prediction.trie.TrieDictionary
 object PredictorRegistry {
     private val koreanDict: TrieDictionary by lazy {
         val dict = TrieDictionary(InputLanguage.KOREAN)
-        dict.initialize(SampleDictionary.getKoreanWords())
+        dict.initialize(BundledDictionary.getWords(InputLanguage.KOREAN))
+        dict
+    }
+
+    private val englishDict: TrieDictionary by lazy {
+        val dict = TrieDictionary(InputLanguage.ENGLISH)
+        dict.initialize(BundledDictionary.getWords(InputLanguage.ENGLISH))
         dict
     }
 
@@ -44,7 +51,7 @@ object PredictorRegistry {
 
     private fun createPredictor(): WordPredictor {
         return DefaultWordPredictor(
-            dictionaries = listOf(koreanDict),
+            dictionaries = listOf(koreanDict, englishDict),
             learningDelegate = null,
         )
     }
