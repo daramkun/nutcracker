@@ -59,7 +59,7 @@ jobs:
         run: sed -i '' "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" ./build.gradle.kts
 
       - name: Build XCFramework
-        run: ./gradlew :nutcracker:assembleReleaseNutcrackerXCFramework
+        run: ./gradlew :nutcracker:assembleNutcrackerXCFramework
 
       - name: Zip XCFramework
         run: |

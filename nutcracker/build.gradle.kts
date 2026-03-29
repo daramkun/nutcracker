@@ -80,17 +80,6 @@ tasks.withType<JavaCompile> {
 }
 
 publishing {
-    publications {
-        register<MavenPublication>("gpr") {
-            groupId = "com.daram"
-            artifactId = "nutcracker"
-            version = project.version.toString()
-
-            afterEvaluate {
-                from(components["kotlin"])
-            }
-        }
-    }
     repositories {
         maven {
             name = "GitHubPackages"
