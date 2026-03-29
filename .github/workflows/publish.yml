@@ -6,7 +6,7 @@ on:
       - "v*.*.*"
 
 jobs:
-  publish:
+  publish-maven:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -32,4 +32,63 @@ jobs:
         run: ./gradlew publish
         env:
           GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-swift:
+    runs-on: macos-latest
+    permissions:
+      contents: write
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-java@v4
+        with:
+          java-version: "17"
+          distribution: "temurin"
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Extract version from tag
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
+
+      - name: Set version in build.gradle.kts
+        run: sed -i '' "s/version = \".*\"/version = \"${{ env.VERSION }}\"/" ./build.gradle.kts
+
+      - name: Build XCFramework
+        run: ./gradlew :nutcracker:assembleReleaseNutcrackerXCFramework
+
+      - name: Zip XCFramework
+        run: |
+          cd nutcracker/build/XCFrameworks/release
+          zip -r Nutcracker.xcframework.zip Nutcracker.xcframework
+
+      - name: Calculate checksum
+        run: |
+          CHECKSUM=$(swift package compute-checksum nutcracker/build/XCFrameworks/release/Nutcracker.xcframework.zip)
+          echo "CHECKSUM=$CHECKSUM" >> $GITHUB_ENV
+
+      - name: Upload XCFramework to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: nutcracker/build/XCFrameworks/release/Nutcracker.xcframework.zip
+          fail_on_unmatched_files: true
+
+      - name: Update Package.swift
+        run: |
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/download/v${{ env.VERSION }}/Nutcracker.xcframework.zip"
+          sed -i '' "s|url: \".*Nutcracker\.xcframework\.zip\"|url: \"$RELEASE_URL\"|" Package.swift
+          sed -i '' "s|checksum: \".*\"|checksum: \"${{ env.CHECKSUM }}\"|" Package.swift
+
+      - name: Commit updated Package.swift
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add Package.swift
+          git commit -m "chore: update Package.swift for v${{ env.VERSION }}"
+          git push origin HEAD:main
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

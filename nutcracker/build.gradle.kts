@@ -1,16 +1,75 @@
-plugins {
-    kotlin("jvm")
-    `maven-publish`
-}
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
-dependencies {
-    testImplementation(kotlin("test"))
+plugins {
+    kotlin("multiplatform")
+    `maven-publish`
 }
 
 kotlin {
     jvmToolchain(17)
-    compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+
+    jvm {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11
+        }
+    }
+
+    val xcf = XCFramework("Nutcracker")
+
+    iosX64 {
+        binaries.framework {
+            baseName = "Nutcracker"
+            xcf.add(this)
+        }
+    }
+    iosArm64 {
+        binaries.framework {
+            baseName = "Nutcracker"
+            xcf.add(this)
+        }
+    }
+    iosSimulatorArm64 {
+        binaries.framework {
+            baseName = "Nutcracker"
+            xcf.add(this)
+        }
+    }
+
+    macosX64 {
+        binaries.framework {
+            baseName = "Nutcracker"
+            xcf.add(this)
+        }
+    }
+    macosArm64 {
+        binaries.framework {
+            baseName = "Nutcracker"
+            xcf.add(this)
+        }
+    }
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+            }
+        }
+
+        val jvmTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 
@@ -19,21 +78,16 @@ tasks.withType<JavaCompile> {
     targetCompatibility = "11"
 }
 
-tasks.test {
-    useJUnitPlatform()
-}
-
-java {
-    withSourcesJar()
-}
-
 publishing {
     publications {
-        create<MavenPublication>("maven") {
+        register<MavenPublication>("gpr") {
             groupId = "com.daram"
             artifactId = "nutcracker"
             version = project.version.toString()
-            from(components["java"])
+
+            afterEvaluate {
+                from(components["kotlin"])
+            }
         }
     }
     repositories {
