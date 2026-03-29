@@ -3,7 +3,6 @@ package com.daram.nutcracker.prediction
 import com.daram.nutcracker.FSMState
 import com.daram.nutcracker.decompose
 import com.daram.nutcracker.splitJongseong
-import kotlin.math.exp
 import kotlin.math.ln
 
 /**
@@ -182,11 +181,11 @@ class DefaultWordPredictor(
                     if (jong == null) return@filter true
                     // 받침 일치: 동일, 겹받침의 첫 번째, 또는 받침 없이 다음 음절 초성과 일치
                     sJong == jong ||
-                        (sJong != null && splitJongseong(sJong)?.first == jong) ||
-                        (sJong == null && word.getOrNull(idx + 1)?.let { next ->
-                            if (next in '\uAC00'..'\uD7A3') decompose(next).first == jong
-                            else next == jong
-                        } == true)
+                            (sJong != null && splitJongseong(sJong)?.first == jong) ||
+                            (sJong == null && word.getOrNull(idx + 1)?.let { next ->
+                                if (next in '\uAC00'..'\uD7A3') decompose(next).first == jong
+                                else next == jong
+                            } == true)
                 }
             }
         }
@@ -240,10 +239,12 @@ class DefaultWordPredictor(
                     result.add(sJung)
                     if (sJong != null) appendJong(result, sJong)
                 }
+
                 FSMState.S2, FSMState.S4 -> {
                     // 초성+중성 입력됨: 종성들만
                     if (sJong != null) appendJong(result, sJong)
                 }
+
                 FSMState.S3 -> {
                     // 홑받침까지 입력됨
                     if (sJong != null) {
@@ -267,10 +268,13 @@ class DefaultWordPredictor(
                         return result
                     }
                 }
+
                 FSMState.S3D -> {
                     // 겹받침까지 모두 입력됨: 조합 음절 내 남은 자모 없음
                 }
-                FSMState.S0 -> { /* 조합 중 상태가 아님 */ }
+
+                FSMState.S0 -> { /* 조합 중 상태가 아님 */
+                }
             }
         }
 
@@ -306,25 +310,19 @@ class DefaultWordPredictor(
     private fun computeFinalScore(baseScore: Float, userEntry: UserWordEntry?): Float {
         if (userEntry == null) return baseScore
         val userBoost = ln(userEntry.useCount + 1f) * userWeight * 0.1f
-        val nowMs = System.currentTimeMillis()
-        val recencyBoost = exp(-(nowMs - userEntry.lastUsedMs).toFloat() / recencyHalfLifeMs) * recencyWeight
-        return baseScore + userBoost + recencyBoost
+        return baseScore + userBoost
     }
 
     private fun computeUserScore(entry: UserWordEntry): Float {
-        val nowMs = System.currentTimeMillis()
-        val recencyBoost = exp(-(nowMs - entry.lastUsedMs).toFloat() / recencyHalfLifeMs) * recencyWeight
-        return entry.score + recencyBoost
+        return entry.score
     }
 
     private fun updateUserWord(word: String, language: InputLanguage) {
-        val now = System.currentTimeMillis()
         val existing = userWords[word]
         val updated = if (existing != null) {
             existing.copy(
                 score = (existing.score + 0.5f).coerceAtMost(10f),
                 useCount = existing.useCount + 1,
-                lastUsedMs = now,
             )
         } else {
             UserWordEntry(
@@ -332,7 +330,7 @@ class DefaultWordPredictor(
                 language = language,
                 score = 1.0f,
                 useCount = 1,
-                lastUsedMs = now,
+                lastUsedMs = 0L,
             )
         }
         userWords[word] = updated

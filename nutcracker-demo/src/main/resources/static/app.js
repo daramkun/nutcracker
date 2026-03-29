@@ -73,86 +73,164 @@ const DANMOEM_MAP = {
 };
 
 // 천지인 (3×4 폰 키패드)
-const CHEONJIIN_KEYS = [
-  { key: "1", label: "1", jamo: "ㅣ" },
-  { key: "2", label: "2", jamo: "ㆍ" },
-  { key: "3", label: "3", jamo: "ㅡ" },
-  { key: "4", label: "4", jamo: "ㄱ ㅋ ㄲ" },
-  { key: "5", label: "5", jamo: "ㄴ ㄹ" },
-  { key: "6", label: "6", jamo: "ㄷ ㅌ ㄸ" },
-  { key: "7", label: "7", jamo: "ㅂ ㅍ ㅃ" },
-  { key: "8", label: "8", jamo: "ㅅ ㅎ ㅆ" },
-  { key: "9", label: "9", jamo: "ㅈ ㅊ ㅉ" },
-  { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
-  { key: "0", label: "0", jamo: "ㅇ ㅁ" },
-  { key: "SPACE", label: "␣", jamo: "", special: true },
+const CHEONJIIN_ROWS = [
+  [
+    { key: "1", label: "1", jamo: "ㅣ" },
+    { key: "2", label: "2", jamo: "ㆍ" },
+    { key: "3", label: "3", jamo: "ㅡ" },
+  ],
+  [
+    { key: "4", label: "4", jamo: "ㄱ ㅋ ㄲ" },
+    { key: "5", label: "5", jamo: "ㄴ ㄹ" },
+    { key: "6", label: "6", jamo: "ㄷ ㅌ ㄸ" },
+  ],
+  [
+    { key: "7", label: "7", jamo: "ㅂ ㅍ ㅃ" },
+    { key: "8", label: "8", jamo: "ㅅ ㅎ ㅆ" },
+    { key: "9", label: "9", jamo: "ㅈ ㅊ ㅉ" },
+  ],
+  [
+    { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
+    { key: "0", label: "0", jamo: "ㅇ ㅁ" },
+    { key: "SPACE", label: "␣", jamo: "", special: true },
+  ],
 ];
 
 // KT 나랏글 (10-key + * #)
-const NARATGEUL_KEYS = [
-  { key: "1", label: "1", jamo: "ㄱ ㅋ" },
-  { key: "2", label: "2", jamo: "ㄴ ㄷ ㅌ" },
-  { key: "3", label: "3", jamo: "ㅏ ㅓ" },
-  { key: "4", label: "4", jamo: "ㄹ" },
-  { key: "5", label: "5", jamo: "ㅁ ㅂ ㅍ" },
-  { key: "6", label: "6", jamo: "ㅗ ㅜ" },
-  { key: "7", label: "7", jamo: "ㅅ ㅈ ㅊ" },
-  { key: "8", label: "8", jamo: "ㅇ ㅎ" },
-  { key: "9", label: "9", jamo: "ㅣ" },
-  { key: "STROKE_ADD", label: "*", jamo: "획추가", special: true },
-  { key: "0", label: "0", jamo: "ㅡ" },
-  { key: "#", label: "#", jamo: "쌍자음", special: true },
-  { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
-  { key: "SPACE", label: "␣", jamo: "", special: true },
-  { key: "ENTER", label: "↵", jamo: "", special: true },
+const NARATGEUL_ROWS = [
+  [
+    { key: "1", label: "1", jamo: "ㄱ ㅋ" },
+    { key: "2", label: "2", jamo: "ㄴ ㄷ ㅌ" },
+    { key: "3", label: "3", jamo: "ㅏ ㅓ" },
+  ],
+  [
+    { key: "4", label: "4", jamo: "ㄹ" },
+    { key: "5", label: "5", jamo: "ㅁ ㅂ ㅍ" },
+    { key: "6", label: "6", jamo: "ㅗ ㅜ" },
+  ],
+  [
+    { key: "7", label: "7", jamo: "ㅅ ㅈ ㅊ" },
+    { key: "8", label: "8", jamo: "ㅇ ㅎ" },
+    { key: "9", label: "9", jamo: "ㅣ" },
+  ],
+  [
+    { key: "STROKE_ADD", label: "*", jamo: "획추가", special: true },
+    { key: "0", label: "0", jamo: "ㅡ" },
+    { key: "#", label: "#", jamo: "쌍자음" },
+  ],
+  [
+    { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
+    { key: "SPACE", label: "␣", jamo: "", special: true },
+    { key: "ENTER", label: "↵", jamo: "", special: true },
+  ],
 ];
 
 // SKY-II (12-key 멀티탭)
-const SKYII_KEYS = [
-  { key: "1", label: "1", jamo: "ㄱ ㅋ ㄲ" },
-  { key: "2", label: "2", jamo: "ㅣ ㅡ" },
-  { key: "3", label: "3", jamo: "ㅏ ㅑ" },
-  { key: "4", label: "4", jamo: "ㄷ ㅌ ㄸ" },
-  { key: "5", label: "5", jamo: "ㄴ ㄹ" },
-  { key: "6", label: "6", jamo: "ㅓ ㅕ" },
-  { key: "7", label: "7", jamo: "ㅁ ㅅ" },
-  { key: "8", label: "8", jamo: "ㅂ ㅍ ㅃ" },
-  { key: "9", label: "9", jamo: "ㅗ ㅛ" },
-  { key: "*", label: "*", jamo: "ㅈ ㅊ ㅉ" },
-  { key: "0", label: "0", jamo: "ㅇ ㅎ" },
-  { key: "#", label: "#", jamo: "ㅜ ㅠ" },
-  { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
-  { key: "SPACE", label: "␣", jamo: "", special: true },
-  { key: "ENTER", label: "↵", jamo: "", special: true },
+const SKYII_ROWS = [
+  [
+    { key: "1", label: "1", jamo: "ㄱ ㅋ ㄲ" },
+    { key: "2", label: "2", jamo: "ㅣ ㅡ" },
+    { key: "3", label: "3", jamo: "ㅏ ㅑ" },
+  ],
+  [
+    { key: "4", label: "4", jamo: "ㄷ ㅌ ㄸ" },
+    { key: "5", label: "5", jamo: "ㄴ ㄹ" },
+    { key: "6", label: "6", jamo: "ㅓ ㅕ" },
+  ],
+  [
+    { key: "7", label: "7", jamo: "ㅁ ㅅ" },
+    { key: "8", label: "8", jamo: "ㅂ ㅍ ㅃ" },
+    { key: "9", label: "9", jamo: "ㅗ ㅛ" },
+  ],
+  [
+    { key: "*", label: "*", jamo: "ㅈ ㅊ ㅉ" },
+    { key: "0", label: "0", jamo: "ㅇ ㅎ" },
+    { key: "#", label: "#", jamo: "ㅜ ㅠ" },
+  ],
+  [
+    { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
+    { key: "SPACE", label: "␣", jamo: "", special: true },
+    { key: "ENTER", label: "↵", jamo: "", special: true },
+  ],
 ];
 
 // 모토로라 (12-key + # 변환키)
-const MOTOROLA_KEYS = [
-  { key: "1", label: "1", jamo: "ㄱ ㅋ" },
-  { key: "2", label: "2", jamo: "ㄴ ㅁ" },
-  { key: "3", label: "3", jamo: "ㅏ ㅓ" },
-  { key: "4", label: "4", jamo: "ㄷ ㅌ" },
-  { key: "5", label: "5", jamo: "ㄹ" },
-  { key: "6", label: "6", jamo: "ㅗ ㅜ" },
-  { key: "7", label: "7", jamo: "ㅂ ㅍ" },
-  { key: "8", label: "8", jamo: "ㅅ" },
-  { key: "9", label: "9", jamo: "ㅣ ㅡ" },
-  { key: "*", label: "*", jamo: "ㅈ ㅊ" },
-  { key: "0", label: "0", jamo: "ㅇ ㅎ" },
-  { key: "MODE_SWITCH", label: "#", jamo: "변환", special: true },
-  { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
-  { key: "SPACE", label: "␣", jamo: "", special: true },
-  { key: "ENTER", label: "↵", jamo: "", special: true },
+const MOTOROLA_ROWS = [
+  [
+    { key: "1", label: "1", jamo: "ㄱ ㅋ" },
+    { key: "2", label: "2", jamo: "ㄴ ㅁ" },
+    { key: "3", label: "3", jamo: "ㅏ ㅓ" },
+  ],
+  [
+    { key: "4", label: "4", jamo: "ㄷ ㅌ" },
+    { key: "5", label: "5", jamo: "ㄹ" },
+    { key: "6", label: "6", jamo: "ㅗ ㅜ" },
+  ],
+  [
+    { key: "7", label: "7", jamo: "ㅂ ㅍ" },
+    { key: "8", label: "8", jamo: "ㅅ" },
+    { key: "9", label: "9", jamo: "ㅣ ㅡ" },
+  ],
+  [
+    { key: "*", label: "*", jamo: "ㅈ ㅊ" },
+    { key: "0", label: "0", jamo: "ㅇ ㅎ" },
+    { key: "MODE_SWITCH", label: "#", jamo: "변환", special: true },
+  ],
+  [
+    { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
+    { key: "SPACE", label: "␣", jamo: "", special: true },
+    { key: "ENTER", label: "↵", jamo: "", special: true },
+  ],
 ];
 
-const PHONE_LAYOUT_KEYS = {
-  cheonjiin: CHEONJIIN_KEYS,
-  naratgeul: NARATGEUL_KEYS,
-  skyii: SKYII_KEYS,
-  motorola: MOTOROLA_KEYS,
+// 무이128 (12자음 + 8모음, 물리 키 = 자모 문자 자체)
+const MUE128_ROWS = [
+  // 행1: 자음 4 + 모음 2 + 지우기
+  [
+    { key: "ㅈ", label: "ㅈ", jamo: "ㅉ" },
+    { key: "ㄷ", label: "ㄷ", jamo: "ㄸ" },
+    { key: "ㄱ", label: "ㄱ", jamo: "ㄲ" },
+    { key: "ㅅ", label: "ㅅ", jamo: "ㅆ" },
+    { key: "ㅔ", label: "ㅔ", jamo: "ㅖ" },
+    { key: "ㅐ", label: "ㅐ", jamo: "ㅒ" },
+    { key: "BACKSPACE", label: "⌫", jamo: "", special: true },
+  ],
+  // 행2: 자음 4 + 모음 3
+  [
+    { key: "ㅁ", label: "ㅁ", jamo: "" },
+    { key: "ㄴ", label: "ㄴ", jamo: "" },
+    { key: "ㅇ", label: "ㅇ", jamo: "" },
+    { key: "ㄹ", label: "ㄹ", jamo: "" },
+    { key: "ㅓ", label: "ㅓ", jamo: "ㅕ" },
+    { key: "ㅏ", label: "ㅏ", jamo: "ㅑ" },
+    { key: "ㅣ", label: "ㅣ", jamo: "" },
+  ],
+  // 행3: 자음 4 + 모음 3
+  [
+    { key: "ㅋ", label: "ㅋ", jamo: "" },
+    { key: "ㅌ", label: "ㅌ", jamo: "ㅊ" },
+    { key: "ㅂ", label: "ㅂ", jamo: "ㅃ" },
+    { key: "ㅎ", label: "ㅎ", jamo: "ㅍ" },
+    { key: "ㅜ", label: "ㅜ", jamo: "ㅠ" },
+    { key: "ㅗ", label: "ㅗ", jamo: "ㅛ" },
+    { key: "ㅡ", label: "ㅡ", jamo: "" },
+  ],
+  // 하단: 스페이스(길게) + 엔터
+  [
+    { key: "SPACE", label: "공백", jamo: "", special: true, flex: 4 },
+    { key: "ENTER", label: "↵", jamo: "", special: true },
+  ],
+];
+
+const PHONE_LAYOUT_ROWS = {
+  cheonjiin: CHEONJIIN_ROWS,
+  naratgeul: NARATGEUL_ROWS,
+  skyii: SKYII_ROWS,
+  motorola: MOTOROLA_ROWS,
+  mue128: MUE128_ROWS,
 };
 
-const PHONE_LAYOUTS = new Set(["cheonjiin", "naratgeul", "skyii", "motorola"]);
+const PHONE_LAYOUTS = new Set(["cheonjiin", "naratgeul", "skyii", "motorola", "mue128"]);
 
 // ── 상태 ──────────────────────────────────────────────────────────
 
@@ -374,33 +452,23 @@ function buildQwertyKeyboard(layout) {
   keyboardEl.appendChild(bottomRow);
 }
 
-function buildPhoneKeyboard(keys) {
+function buildPhoneKeyboard(rows) {
   keyboardEl.className = "phone";
   keyboardEl.innerHTML = "";
 
-  for (let i = 0; i < keys.length; i += 3) {
+  rows.forEach((row) => {
     const rowEl = document.createElement("div");
     rowEl.className = "kbd-row";
 
-    keys.slice(i, i + 3).forEach((k) => {
+    row.forEach((k) => {
       const btn = document.createElement("button");
-
-      if (k.special) {
-        btn.className = "key special";
-        btn.dataset.inputType = "special";
-        btn.dataset.key = k.key;
-        btn.innerHTML =
-          `<span class="key-label">${k.label}</span>` +
-          `<span class="key-korean">${k.jamo}</span>`;
-      } else {
-        btn.className = "key";
-        btn.dataset.inputType = "char";
-        btn.dataset.key = k.key;
-        btn.innerHTML =
-          `<span class="key-label">${k.label}</span>` +
-          `<span class="key-korean">${k.jamo}</span>`;
-      }
-
+      btn.className = k.special ? "key special" : "key";
+      btn.dataset.inputType = k.special ? "special" : "char";
+      btn.dataset.key = k.key;
+      btn.innerHTML =
+        `<span class="key-label">${k.label}</span>` +
+        `<span class="key-korean">${k.jamo}</span>`;
+      if (k.flex) btn.style.flex = k.flex;
       btn.addEventListener("click", () => handleKeyClick(btn));
       rowEl.appendChild(btn);
     });
@@ -413,7 +481,7 @@ function buildPhoneKeyboard(keys) {
     }
 
     keyboardEl.appendChild(rowEl);
-  }
+  });
 }
 
 function makeSpecialKey(specialKey, label, extraClass = "") {
@@ -428,7 +496,7 @@ function makeSpecialKey(specialKey, label, extraClass = "") {
 
 function rebuildKeyboard() {
   if (PHONE_LAYOUTS.has(currentLayout)) {
-    buildPhoneKeyboard(PHONE_LAYOUT_KEYS[currentLayout]);
+    buildPhoneKeyboard(PHONE_LAYOUT_ROWS[currentLayout]);
   } else {
     buildQwertyKeyboard(currentLayout);
   }

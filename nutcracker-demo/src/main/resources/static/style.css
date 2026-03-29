@@ -273,18 +273,15 @@ button.active {
 }
 
 /* Phone keyboard */
-#keyboard.phone {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-}
-
 #keyboard.phone .kbd-row {
-    display: contents;
+    display: flex;
+    gap: 5px;
+    justify-content: stretch;
 }
 
 #keyboard.phone .key {
-    min-width: auto;
+    flex: 1;
+    min-width: 0;
     min-height: 64px;
 }
 

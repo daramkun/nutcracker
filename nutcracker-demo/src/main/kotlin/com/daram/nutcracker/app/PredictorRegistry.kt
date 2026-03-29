@@ -22,6 +22,7 @@ object PredictorRegistry {
             "naratgeul" to createPredictor(),
             "skyii" to createPredictor(),
             "motorola" to createPredictor(),
+            "mue128" to createPredictor(),
         )
     }
 
@@ -33,6 +34,7 @@ object PredictorRegistry {
             "naratgeul" to NaratgeulKeyMapper(),
             "skyii" to SkyIIKeyMapper(),
             "motorola" to MotorolaKeyMapper(),
+            "mue128" to Mue128KeyMapper(),
         )
     }
 

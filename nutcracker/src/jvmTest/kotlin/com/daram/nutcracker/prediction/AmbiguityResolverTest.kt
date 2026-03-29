@@ -3,8 +3,10 @@ package com.daram.nutcracker.prediction
 import com.daram.nutcracker.FSMState
 import com.daram.nutcracker.SyllableState
 import com.daram.nutcracker.prediction.resolver.*
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class AmbiguityResolverTest {
 

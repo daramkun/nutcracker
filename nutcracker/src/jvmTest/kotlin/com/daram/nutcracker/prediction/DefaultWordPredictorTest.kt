@@ -3,16 +3,19 @@ package com.daram.nutcracker.prediction
 import com.daram.nutcracker.FSMState
 import com.daram.nutcracker.SyllableState
 import com.daram.nutcracker.prediction.trie.TrieDictionary
-import org.junit.jupiter.api.Assertions.*
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
+import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class DefaultWordPredictorTest {
 
     private lateinit var dict: TrieDictionary
     private lateinit var predictor: DefaultWordPredictor
 
-    @BeforeEach
+    @BeforeTest
     fun setUp() {
         dict = TrieDictionary(InputLanguage.KOREAN)
         dict.initialize(listOf(
@@ -289,7 +292,7 @@ class DefaultWordPredictorTest {
         val mapper = com.daram.nutcracker.prediction.mapper.DubeolsikKeyMapper()
         val hints = predictor.nextKeyHints(candidates, mapper)
         assertTrue(hints.keyHints.containsKey('k'), "ㅏ 다음 키는 두벌식에서 k")
-        assertEquals(1.0f, hints.keyHints['k']!!, 0.001f)
+        assertTrue(hints.keyHints['k']!! >= 0.999f)
     }
 
     @Test

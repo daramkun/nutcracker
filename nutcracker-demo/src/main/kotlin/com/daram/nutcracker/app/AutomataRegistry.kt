@@ -13,6 +13,7 @@ object AutomataRegistry {
         "naratgeul" to NaratgeulAutomata(),
         "skyii" to SkyIIAutomata(),
         "motorola" to MotorolaAutomata(),
+        "mue128" to Mue128Automata(),
         "english" to EnglishAutomata(),
     )
 

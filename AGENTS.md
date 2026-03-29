@@ -2,7 +2,7 @@
 
 > Claude Code 구현용 형식적 명세 (Formal Specification)  
 > 용도는 Android 키보드 구현용이나 추후 다른 키보드 구현으로도 사용하면 좋을 것 같아 프로젝트를 분리함.  
-> 대상 레이아웃: 두벌식 · 단모음 · 천지인 · KT 나랏글 · SKY-II · 모토로라
+> 대상 레이아웃: 두벌식 · 단모음 · 천지인 · KT 나랏글 · SKY-II · 모토로라 · 무이128
 
 ---
 
@@ -15,7 +15,7 @@
 | 문서 | 내용 | 대상 |
 |------|------|------|
 | **[SPEC_COMMON.md](docs/SPEC_COMMON.md)** | 공통 기반 규칙<br/>- 유니코드 음절 조합 공식<br/>- 자모 인덱스 (초성·중성·종성)<br/>- 복합 자모 테이블<br/>- 공통 FSM 상태 및 전이 규칙<br/>- Backspace 동작 명세 | 모든 레이아웃에 적용 |
-| **[SPEC_LAYOUTS.md](docs/SPEC_LAYOUTS.md)** | 레이아웃별 규칙<br/>- 두벌식 (Dubeolsik)<br/>- 단모음 (Danmoeum)<br/>- 천지인 (Cheonjiin)<br/>- KT 나랏글 (Naratgeul)<br/>- SKY-II<br/>- 모토로라 (Motorola) | 각 레이아웃 구현 |
+| **[SPEC_LAYOUTS.md](docs/SPEC_LAYOUTS.md)** | 레이아웃별 규칙<br/>- 두벌식 (Dubeolsik)<br/>- 단모음 (Danmoeum)<br/>- 천지인 (Cheonjiin)<br/>- KT 나랏글 (Naratgeul)<br/>- SKY-II<br/>- 모토로라 (Motorola)<br/>- 무이128 (Mue128) | 각 레이아웃 구현 |
 | **[IMPLEMENTATION.md](docs/IMPLEMENTATION.md)** | 공통 구현 지시<br/>- 데이터 모델 (Kotlin)<br/>- 핵심 함수 시그니처<br/>- 불변 구현 규칙<br/>- 레이아웃별 클래스 | 개발자 |
 | **[VALIDATION.md](docs/VALIDATION.md)** | 검증 케이스<br/>- 단어 입력 검증 (한글)<br/>- Backspace 동작 검증<br/>- 겹받침 분리 검증<br/>- 이중모음 Backspace 검증 | QA / 테스트 |
 
@@ -40,6 +40,7 @@
 - **KT 나랏글**: [SPEC_LAYOUTS.md의 섹션 5](docs/SPEC_LAYOUTS.md#5-kt-나랏글-naratgeul)
 - **SKY-II**: [SPEC_LAYOUTS.md의 섹션 6](docs/SPEC_LAYOUTS.md#6-sky-ii)
 - **모토로라**: [SPEC_LAYOUTS.md의 섹션 7](docs/SPEC_LAYOUTS.md#7-모토로라-motorola)
+- **무이128**: [SPEC_LAYOUTS.md의 섹션 8](docs/SPEC_LAYOUTS.md#8-무이128-mue128)
 
 ---
 
@@ -66,6 +67,7 @@
 - **섹션 5**: KT 나랏글 (Naratgeul) - 획추가 및 쌍자음 생성
 - **섹션 6**: SKY-II - 멀티탭 (1회/2회/3회)
 - **섹션 7**: 모토로라 (Motorola) - 변환키(#) 방식
+- **섹션 8**: 무이128 (Mue128) - 12자음+8모음 멀티탭, 인접 모음 이어치기
 
 ### IMPLEMENTATION.md (구현 지시)
 
